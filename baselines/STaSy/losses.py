@@ -143,8 +143,11 @@ def get_step_fn(sde, train, optimize_fn=None, reduce_mean=False, continuous=True
 
       if spl:
         nll = losses
-        q_alpha = torch.tensor(alpha0 + torch.log( torch.tensor(1+ 0.0001718*state['step']* (1-alpha0), dtype=torch.float32) )).clamp_(max=1).to(nll.device)
-        q_beta = torch.tensor(beta0 + torch.log( torch.tensor(1+ 0.0001718*state['step']* (1-beta0), dtype=torch.float32) )).clamp_(max=1).to(nll.device)
+        # q_alpha = torch.tensor(alpha0 + torch.log( torch.tensor(1+ 0.0001718*state['step']* (1-alpha0), dtype=torch.float32) )).clamp_(max=1).to(nll.device)
+        # q_beta = torch.tensor(beta0 + torch.log( torch.tensor(1+ 0.0001718*state['step']* (1-beta0), dtype=torch.float32) )).clamp_(max=1).to(nll.device)
+        q_alpha = torch.tensor(alpha0 + torch.log(torch.tensor(1 + 0.01718 * state['step'] * (1 - alpha0), dtype=torch.float32))).clamp_(max=1).to(nll.device)
+        q_beta = torch.tensor(beta0 + torch.log(torch.tensor(1 + 0.01718 * state['step'] * (1 - beta0), dtype=torch.float32))).clamp_(max=1).to(nll.device)
+
         logging.info(f"q_alpha: {q_alpha}, q_beta: {q_beta}")
         writer.add_scalars("quatiles", {"q_alpha":q_alpha.item(), "q_beta": q_beta.item()}, state['step'])
 

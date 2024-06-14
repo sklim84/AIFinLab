@@ -1,0 +1,37 @@
+{
+    "sequence_index": "Date",
+    "sequence_key": "Symbol",
+    "METADATA_SPEC_VERSION": "SINGLE_TABLE_V1",
+    "columns": {
+        "Symbol": {
+            "sdtype": "id",
+            "regex_format": "[A-Z]{4}"
+        },
+        "Date": {
+            "sdtype": "datetime",
+            "datetime_format": "%Y-%m-%d"
+        },
+        "Open": {
+            "sdtype": "numerical",
+            "computer_representation": "Float"
+        },
+        "Close": {
+            "sdtype": "numerical",
+            "computer_representation": "Float"
+        },
+        "Volume": {
+            "sdtype": "numerical",
+            "computer_representation": "Int64"
+        },
+        "MarketCap": {
+            "sdtype": "numerical",
+            "computer_representation": "Float"
+        },
+        "Sector": {
+            "sdtype": "categorical"
+        },
+        "Industry": {
+            "sdtype": "categorical"
+        }
+    }
+}

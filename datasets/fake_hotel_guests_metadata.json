@@ -1,0 +1,40 @@
+{
+    "primary_key": "guest_email",
+    "METADATA_SPEC_VERSION": "SINGLE_TABLE_V1",
+    "columns": {
+        "guest_email": {
+            "sdtype": "email",
+            "pii": true
+        },
+        "has_rewards": {
+            "sdtype": "boolean"
+        },
+        "room_type": {
+            "sdtype": "categorical"
+        },
+        "amenities_fee": {
+            "sdtype": "numerical",
+            "computer_representation": "Float"
+        },
+        "checkin_date": {
+            "sdtype": "datetime",
+            "datetime_format": "%d %b %Y"
+        },
+        "checkout_date": {
+            "sdtype": "datetime",
+            "datetime_format": "%d %b %Y"
+        },
+        "room_rate": {
+            "sdtype": "numerical",
+            "computer_representation": "Float"
+        },
+        "billing_address": {
+            "sdtype": "address",
+            "pii": true
+        },
+        "credit_card_number": {
+            "sdtype": "credit_card_number",
+            "pii": true
+        }
+    }
+}

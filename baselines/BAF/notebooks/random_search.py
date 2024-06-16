@@ -143,6 +143,8 @@ def suggest_callable_hyperparams(
     )
 
     hyperparam_subspace = hyperparameter_space[callable_type]
+
+    print(hyperparam_subspace)
     callable_classpath = hyperparam_subspace['classpath']
 
     # Suggest callable kwargs (on conditional sub-space)

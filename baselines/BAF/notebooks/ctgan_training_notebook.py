@@ -14,7 +14,7 @@ from numpy import random
 from sklearn import preprocessing
 from sklearn import utils
 from typing import Dict, Union
-
+import datetime
 from random_search import RandomValueTrial, suggest_callable_hyperparams
 
 CATEGORICAL_FEATURES = [
@@ -40,8 +40,9 @@ N_RUNS = 4
 
 TARGET_FPR = 0.05
 
+timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 args = {
-    'run_dir': '<run_dir>',
+    'run_dir': f'./run_dir_{timestamp}',
     'config_path': 'config-rs.yml',
     'n_procs': 4,
     'devices': ["cuda:0", "cuda:1", "cuda:2", "cuda:3"],
@@ -106,6 +107,9 @@ def load_data(data_config):
 
     train_df = pd.read_csv(data_config['train'], index_col=0)
     val_df = pd.read_csv(data_config['validation'], index_col=0)
+
+    print(train_df.head())
+    print(val_df.head())
 
     if 'keep' in data_config:
         train_df = train_df[data_config['keep']]
@@ -176,6 +180,7 @@ def build_run_configs(
     seeds = random.randint(n_trials*1000, size=n_trials)
     for i, seed  in enumerate(seeds, start=1):
         # Method to random sample configurations
+        print(f'##### data_sweep_params: {data_sweep_params}')
         configs_data =  suggest_callable_hyperparams(RandomValueTrial(seed=seed), data_sweep_params)
         configs_model = suggest_callable_hyperparams(RandomValueTrial(seed=seed), model_sweep_params['kwargs'])
         configs_model['generator_dim'] = eval(configs_model['generator_dim'])

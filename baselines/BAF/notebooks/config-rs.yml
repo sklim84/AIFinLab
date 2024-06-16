@@ -1,6 +1,6 @@
 data:
-  train: <train_path>
-  validation: <val_path>
+  train: "./Base_train.csv"
+  validation: "./Base_valid.csv"
   keep:
     - fraud_bool
     - income

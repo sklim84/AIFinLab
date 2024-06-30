@@ -9,7 +9,7 @@ def generate_sample_data(num_samples=100):
     data = []
 
     # 자주 사용되는 출금 계좌와 입금 계좌 쌍 생성
-    common_nodes = [(random.randint(100, 999), random.randint(1000000000000000, 9999999999999999)) for _ in range(10)]
+    common_nodes = [(random.randint(100, 150), random.randint(1000000000000000, 9999999999999999)) for _ in range(10)]
 
     for _ in range(num_samples):
         TRAN_DT = (datetime.date.today() - datetime.timedelta(days=random.randint(0, 365))).strftime('%Y%m%d')
@@ -21,7 +21,7 @@ def generate_sample_data(num_samples=100):
         if random.random() < 0.5:
             WD_FC_SN, WD_AC_SN = random.choice(common_nodes)
         else:
-            WD_FC_SN = random.randint(100, 999)
+            WD_FC_SN = random.randint(100, 150)
             WD_AC_SN = random.randint(1000000000000000, 9999999999999999)
 
         # DPS_FC_SN = random.randint(100, 999)
@@ -29,7 +29,7 @@ def generate_sample_data(num_samples=100):
         if random.random() < 0.5:
             DPS_FC_SN, DPS_AC_SN = random.choice(common_nodes)
         else:
-            DPS_FC_SN = random.randint(100, 999)
+            DPS_FC_SN = random.randint(100, 150)
             DPS_AC_SN = random.randint(1000000000000000, 9999999999999999)
 
         TRAN_AMT = random.randint(1000, 1000000)
@@ -47,7 +47,7 @@ def generate_sample_data(num_samples=100):
     df = pd.DataFrame(data, columns=columns)
     return df
 
-n_samples = 100
+n_samples = 20
 sample_data = generate_sample_data(n_samples)
 print(sample_data.head())
 

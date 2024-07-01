@@ -1,5 +1,7 @@
 import pandas as pd
 import networkx as nx
+import numpy as np
+from scipy.stats import chi2
 
 # 샘플 데이터 크기
 n_samples = 1000
@@ -77,22 +79,48 @@ for u, v, d in G.edges(data=True):
                 pattern_counts['stack'][v2] += 1
 
 # 원본 데이터프레임에 패턴 카운트 추가 (Source 노드에 대한 지표)
-df['source_fan_out'] = df['Source'].map(pattern_counts['fan_out'])
-df['source_fan_in'] = df['Source'].map(pattern_counts['fan_in'])
-df['source_gather_scatter'] = df['Source'].map(pattern_counts['gather_scatter'])
-df['source_simple_cycle'] = df['Source'].map(pattern_counts['simple_cycle'])
+df['Source_fan_out'] = df['Source'].map(pattern_counts['fan_out'])
+df['Source_fan_in'] = df['Source'].map(pattern_counts['fan_in'])
+df['Source_gather_scatter'] = df['Source'].map(pattern_counts['gather_scatter'])
+df['Source_simple_cycle'] = df['Source'].map(pattern_counts['simple_cycle'])
 # df['source_random'] = df['Source'].map(pattern_counts['random'])
-df['source_bipartite'] = df['Source'].map(pattern_counts['bipartite'])
-df['source_stack'] = df['Source'].map(pattern_counts['stack'])
+df['Source_bipartite'] = df['Source'].map(pattern_counts['bipartite'])
+df['Source_stack'] = df['Source'].map(pattern_counts['stack'])
 
 # 원본 데이터프레임에 패턴 카운트 추가 (Target 노드에 대한 지표)
-df['target_fan_out'] = df['Target'].map(pattern_counts['fan_out'])
-df['target_fan_in'] = df['Target'].map(pattern_counts['fan_in'])
-df['target_gather_scatter'] = df['Target'].map(pattern_counts['gather_scatter'])
-df['target_simple_cycle'] = df['Target'].map(pattern_counts['simple_cycle'])
+df['Target_fan_out'] = df['Target'].map(pattern_counts['fan_out'])
+df['Target_fan_in'] = df['Target'].map(pattern_counts['fan_in'])
+df['Target_gather_scatter'] = df['Target'].map(pattern_counts['gather_scatter'])
+df['Target_simple_cycle'] = df['Target'].map(pattern_counts['simple_cycle'])
 # df['target_random'] = df['Target'].map(pattern_counts['random'])
-df['target_bipartite'] = df['Target'].map(pattern_counts['bipartite'])
-df['target_stack'] = df['Target'].map(pattern_counts['stack'])
+df['Target_bipartite'] = df['Target'].map(pattern_counts['bipartite'])
+df['Target_stack'] = df['Target'].map(pattern_counts['stack'])
+
+# 마할라노비스 거리 계산 함수
+def mahalanobis_distance(x, mean, cov):
+    diff = x - mean
+    return np.sqrt(diff.dot(np.linalg.inv(cov)).dot(diff))
+
+# Source와 Target에 대해 각각 마할라노비스 거리 계산
+def calculate_mahalanobis(df, node_type):
+    patterns = ['fan_out', 'fan_in', 'gather_scatter', 'simple_cycle', 'bipartite', 'stack']
+    X = df[[f'{node_type}_{p}' for p in patterns]]
+    mean = X.mean()
+    cov = X.cov()
+
+    distances = X.apply(lambda row: mahalanobis_distance(row, mean, cov), axis=1)
+    p_values = distances.apply(lambda d: 1 - chi2.cdf(d ** 2, df=len(patterns)))
+
+    return distances, p_values
+
+# CAI (Composite Anti-Money Laundering Index)
+# Source (출금계좌)에 대한 마할라노비스 거리 및 CAI 계산
+df['Source_mahalanobis'], df['Source_p_value'] = calculate_mahalanobis(df, 'Source')
+df['Source_CAI'] = 1 - df['Source_p_value']
+
+# Target (입금계좌)에 대한 마할라노비스 거리 및 CAI 계산
+df['Target_mahalanobis'], df['Target_p_value'] = calculate_mahalanobis(df, 'Target')
+df['Target_CAI'] = 1 - df['Target_p_value']
 
 # 모든 컬럼 출력 설정
 pd.set_option('display.max_columns', None)
@@ -100,3 +128,4 @@ pd.set_option('display.max_columns', None)
 # 결과 출력
 print(df.head())
 df.to_csv(f'./datasets/hf_sample_{n_samples}_aml_feat.csv', index=False)
+

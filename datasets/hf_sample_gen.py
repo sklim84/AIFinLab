@@ -42,12 +42,12 @@ def generate_sample_data(num_samples=100):
         data.append(
             [TRAN_DT, TRAN_TMRG, WD_FC_SN, WD_AC_SN, DPS_FC_SN, DPS_AC_SN, TRAN_AMT, MD_TYPE, FND_TYPE, FF_SP_AI])
 
-    columns = ['TRAN_DT', 'TRAN_TMRG', 'WD_FC_SN', 'WD_AC_SN', 'DPS_FC_SN', 'DPS_AC_SN', 'TRAN_AMT', 'MD_TYPE',
-               'FND_TYPE', 'FF_SP_AI']
+    columns = ['tran_dt', 'tran_tmrg', 'wd_fc_sn', 'wd_ac_sn', 'dps_fc_sn', 'dps_ac_sn', 'tran_amt', 'md_type',
+               'fnd_type', 'ff_sp_ai']
     df = pd.DataFrame(data, columns=columns)
     return df
 
-n_samples = 20
+n_samples = 10000
 sample_data = generate_sample_data(n_samples)
 print(sample_data.head())
 

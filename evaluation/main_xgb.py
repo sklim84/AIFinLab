@@ -59,7 +59,7 @@ if __name__ == "__main__":
     df_test_data.drop(columns=['ff_sp_ai'], inplace=True)
 
     model = xgb.XGBClassifier(
-        tree_method='gpu_hist',
+        # tree_method='gpu_hist',
         n_estimators=args.n_estimators,
         learning_rate=args.learning_rate,
         max_depth=args.max_depth,

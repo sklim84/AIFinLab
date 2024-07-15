@@ -64,8 +64,8 @@ if __name__ == "__main__":
         max_ctr_complexity=args.max_ctr_complexity,
         od_type=args.od_type,
         random_seed=args.seed,
-        task_type='GPU',
-        devices=args.gpu,
+        # task_type='GPU',
+        # devices=args.gpu,
         verbose=True)
     model.fit(X=train_data, eval_set=valid_data, verbose=True)
     pred_labels = model.predict(test_data)

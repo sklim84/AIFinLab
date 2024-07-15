@@ -8,7 +8,8 @@ import pprint
 
 # 1. Data Preparation
 n_samples = 100000
-n_gen_samples_arr = [100000, 150000, 300000]
+# n_gen_samples_arr = [100000, 150000, 300000]
+n_gen_samples_arr = [1000]
 
 # FIXME GPU
 cuda_device = 'cuda:0' if torch.cuda.is_available() else 'cpu'

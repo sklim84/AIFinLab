@@ -1,7 +1,7 @@
 import random
 import typing as tp
 
-from datasets import Dataset
+from _fake_datasets import Dataset
 from dataclasses import dataclass
 from transformers import DataCollatorWithPadding
 

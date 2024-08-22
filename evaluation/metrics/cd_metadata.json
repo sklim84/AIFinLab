@@ -1,0 +1,42 @@
+{
+    "columns": {
+        "tran_dt": {
+            "sdtype": "datetime",
+            "format": "%Y-%m-%d"
+        },
+        "tran_tmrg": {
+            "sdtype": "categorical"
+        },
+        "atm_sn": {
+            "sdtype": "id"
+        },
+        "hdl_fc_sn": {
+            "sdtype": "id"
+        },
+        "pay_ac_sn": {
+            "sdtype": "id"
+        },
+        "dps_ac_sn": {
+            "sdtype": "id"
+        },
+        "tran_code": {
+            "sdtype": "categorical"
+        },
+        "tran_amt": {
+            "sdtype": "numerical",
+            "computer_representation": "Int64"
+        },
+        "fee": {
+            "sdtype": "numerical"
+        },
+        "ff_sp_ai": {
+            "sdtype": "categorical"
+        },
+        "dps_fc_sn": {
+            "sdtype": "id"
+        },
+        "wd_fc_sn": {
+            "sdtype": "id"
+        }
+    }
+}

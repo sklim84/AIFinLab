@@ -1,0 +1,36 @@
+{
+    "columns": {
+        "tran_dt": {
+            "sdtype": "datetime",
+            "format": "%Y-%m-%d"
+        },
+        "tran_tmrg": {
+            "sdtype": "categorical"
+        },
+        "wd_fc_sn": {
+            "sdtype": "id"
+        },
+        "wd_ac_sn": {
+            "sdtype": "id"
+        },
+        "dps_fc_sn": {
+            "sdtype": "id"
+        },
+        "dps_ac_sn": {
+            "sdtype": "id"
+        },
+        "tran_amt": {
+            "sdtype": "numerical",
+            "computer_representation": "Int64"
+        },
+        "md_type": {
+            "sdtype": "categorical"
+        },
+        "fnd_type": {
+            "sdtype": "categorical"
+        },
+        "ff_sp_ai": {
+            "sdtype": "categorical"
+        }
+    }
+}

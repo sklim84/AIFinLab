@@ -22,8 +22,8 @@ from sdv.single_table import CTGANSynthesizer
 """
 
 # For this demo, we'll use a fake dataset that describes some fictional guests staying at a hotel.
-read_data_path = '../datasets/fake_hotel_guests.csv'
-metadata_path = '../datasets/fake_hotel_guests_metadata.json'
+read_data_path = '../_fake_datasets/samples/fake_hotel_guests.csv'
+metadata_path = '../_fake_datasets/samples/fake_hotel_guests_metadata.json'
 
 # real_data, metadata = download_demo(
 #     modality='single_table',

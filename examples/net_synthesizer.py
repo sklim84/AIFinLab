@@ -1,23 +1,14 @@
 import random
-import pandas as pd
-import torch
-import time
-from rdt.transformers.pii import AnonymizedFaker
-import networkx as nx
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
-from sdv.single_table import CopulaGANSynthesizer
-from sdv.metadata import SingleTableMetadata
-import pprint
-
 
 '''
 1. Data Preparation
 '''
+import pandas as pd
+import torch
+import time
 
-n_samples = 100000
-n_gen_samples_arr = [1000]
+n_samples=100000
+n_gen_samples_arr = [300000]
 
 # FIXME GPU
 cuda_device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
@@ -25,7 +16,7 @@ print(f'##### Using device: {cuda_device}')
 
 # 예제 데이터 로드
 start_time = time.time()
-data = pd.read_csv('./datasets/hf_sample_1000.csv')
+data = pd.read_csv(f'/home/dtestbed/workspace/AIFinLab/results/hf_ctgan_training.csv')
 print(f'##### Data loading time: {time.time() - start_time:.2f} seconds')
 
 # 노드 생성
@@ -38,7 +29,10 @@ print(f'##### Data preparing time: {time.time() - start_time:.2f} seconds')
 '''
 2. Network Analysis
 '''
-
+import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.stats import gaussian_kde
 
 # 네트워크 생성
 start_time = time.time()
@@ -49,7 +43,6 @@ G = nx.from_pandas_edgelist(
     edge_attr=True,
     create_using=nx.MultiDiGraph()
 )
-
 in_degree_values = np.array(list(nx.in_degree_centrality(G).values())) * (n_samples - 1)
 out_degree_values = np.array(list(nx.out_degree_centrality(G).values())) * (n_samples - 1)
 
@@ -69,8 +62,10 @@ def degree_to_distribution(degree_values):
     for i in range(100):
         dist.append(kde(i))
         if sum(dist) >= 1:
+            # make overall percentage as 1
             dist[i] = dist[i] - (sum(dist) - 1)
             break
+        # complement limitation
         elif kde(i) < 0.01:
             dist[i] = 0.01
 
@@ -83,6 +78,9 @@ print(f'##### Network analysis time: {time.time() - start_time:.2f} seconds')
 '''
 3. Prepare CT-GAN
 '''
+from sdv.single_table import CopulaGANSynthesizer
+from sdv.metadata import SingleTableMetadata
+import pprint
 
 # 메타데이터 정의
 start_time = time.time()
@@ -96,8 +94,7 @@ metadata.update_column(
 )
 metadata.update_columns(
     column_names=['WD_NODE', 'DPS_NODE'],
-    sdtype='id'
-)
+    sdtype='id')
 metadata.update_column(
     column_name='tran_amt',
     sdtype='numerical'
@@ -110,14 +107,15 @@ pprint.pprint(metadata.to_dict())
 
 # CTGANSynthesizer 모델 초기화 및 데이터 학습
 model = CopulaGANSynthesizer(metadata, cuda=cuda_device)
+
 model.auto_assign_transformers(data)
 pprint.pprint(model.get_transformers())
-print(f'##### Model preparing time: {time.time() - start_time:.2f} seconds')
+print(f"##### Model preparing time: {time.time() - start_time:.2f} seconds")
 
 '''
 4. Custom CT-GAN
 '''
-
+from rdt.transformers.pii import AnonymizedFaker
 
 class CustomTransformer(AnonymizedFaker):
     INPUT_SDTYPE = 'text'
@@ -126,7 +124,7 @@ class CustomTransformer(AnonymizedFaker):
     def __init__(self, dist, n_gen_samples):
         super().__init__(
             function_name='numerify',
-            function_kwargs={'text': '###-###############'}
+            function_kwargs={'text': '###-################'}
         )
         self.dist = dist
         self.generated = [[] for _ in range(len(dist))]
@@ -137,6 +135,7 @@ class CustomTransformer(AnonymizedFaker):
         return list({cls.INPUT_SDTYPE})
 
     def _function(self):
+        # degree = 1 의 갯수를 이미 초과한 경우
         if len(self.generated[0]) >= self.dist[0] * self.n_gen_samples and self.dist[0] > 1:
             for i in range(1, len(self.dist)):
                 if len(self.generated[i]) < self.dist[i] * self.n_gen_samples:
@@ -145,6 +144,7 @@ class CustomTransformer(AnonymizedFaker):
         else:
             gen_item = super()._function()
 
+        # check if it was generated before
         is_generated_before = False
         position = (-1, -1)
         for i, row in enumerate(self.generated):
@@ -161,7 +161,6 @@ class CustomTransformer(AnonymizedFaker):
             del self.generated[position[0]][position[1]]
         else:
             self.generated[0].append(gen_item)
-
         return gen_item
 
 for n_gen_samples in n_gen_samples_arr:
@@ -176,7 +175,7 @@ for n_gen_samples in n_gen_samples_arr:
 
     model.fit(data)
     # model.save(f'./results/hf_ctgan.pkl')
-    print(f'##### Model training time: {time.time() - start_time:.2f} seconds')
+    print(f"##### Model training time: {time.time() - start_time:.2f} seconds")
 
     '''
     6. Training CT-GAN
@@ -184,7 +183,7 @@ for n_gen_samples in n_gen_samples_arr:
     # 합성 데이터 생성
     start_time = time.time()
     synthetic_data = model.sample(n_gen_samples)
-    print(f'##### Total synthetic data generation time: {time.time() - start_time:.2f} seconds')
+    print(f"##### Total synthetic data generation time: {time.time() - start_time:.2f} seconds")
 
     synthetic_data[['dps_fc_sn', 'dps_ac_sn']] = synthetic_data['DPS_NODE'].str.split('-', expand=True)
     synthetic_data[['wd_fc_sn', 'wd_ac_sn']] = synthetic_data['WD_NODE'].str.split('-', expand=True)

@@ -13,8 +13,8 @@ from sdv.sequential import PARSynthesizer
 # 1. Loading the demo data
 """
 
-read_data_path = '../datasets/nasdaq100_2019.csv'
-metadata_path = '../datasets/nasdaq100_2019_metadata.json'
+read_data_path = '../_fake_datasets/samples/nasdaq100_2019.csv'
+metadata_path = '../_fake_datasets/samples/nasdaq100_2019_metadata.json'
 
 # real_data, metadata = download_demo(
 #     modality='sequential',

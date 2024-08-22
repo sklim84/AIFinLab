@@ -24,7 +24,7 @@ from sdv.single_table import GaussianCopulaSynthesizer
 """
 
 # For this demo, we'll use a fake dataset that describes some fictional guests staying at a hotel.
-read_data_path = '../datasets/fake_hotel_guests.csv'
+read_data_path = '../_fake_datasets/samples/fake_hotel_guests.csv'
 metadata_path = './datasets/metadata.json'
 
 # real_data, metadata = download_demo(
